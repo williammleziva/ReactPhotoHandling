@@ -1,38 +1,64 @@
+# React Image Handling and Storage Tech Share
+
+## ⏱️ Example Server Quick Start
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
-
-First, run the development server:
-
 ```bash
+git clone https://github.com/williammleziva/ReactPhotoHandling.git
+cd ReactPhotoHandling
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+-----
+### All following instructions assume a npm react application, learn to create one [here](https://react.dev/learn/start-a-new-react-project)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+-----
+## 🖼️ File Resizing and Conversion with [react-image-file-resizer](https://www.npmjs.com/package/react-image-file-resizer) 
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Install the package 
+```bash
+npm i react-image-file-resizer
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Within a Javascript module file include
+```javascript
+import Resizer from "react-image-file-resizer";
+```
 
-## Learn More
+At this point a function can be created to handle file uploading, this will wrap the 'imageFileResizer' function
+```javascript
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
 
-To learn more about Next.js, take a look at the following resources:
+    Resizer.imageFileResizer(
+      file,   //file name
+      300,    //max pixel width
+      300,    //max pixel height
+      'JPEG', //compression format
+      100,    //quality
+      0,      //rotation
+      (resizedFile) => {  //URI Callback function
+        // - Your URI handling function here -
+        setResizedImage(URL.createObjectURL(resizedFile));
+      },
+      'file'  //output type
+    );
+  };
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The URI call back function can then handle the resized data. Our example of this is used to modify state variables. The following code should be included in the same module as 'handleImageUpload'
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```javascript
+    const [resizedImage, setResizedImage] = useState(null);
+```
 
-## Deploy on Vercel
+```javascript
+    return( <div>
+                <input type="file" onChange={handleImageUpload} /> 
+                {resizedImage && <img src={resizedImage} />
+            </div>);
+```
+### The full example Module can be found in [src/pages/fileForm.js](https://github.com/williammleziva/ReactPhotoHandling/blob/main/src/pages/fileForm.js);
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

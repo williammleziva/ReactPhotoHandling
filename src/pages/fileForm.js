@@ -9,17 +9,17 @@ function ImageUploader() {
     const file = event.target.files[0];
 
     Resizer.imageFileResizer(
-      file,
-      300,
-      300,
-      'JPEG',
-      100,
-      0,
-      (resizedFile) => {
+      file,   //file name
+      300,    //max pixel width
+      300,    //max pixel height
+      'JPEG', //compression format
+      100,    //quality
+      0,      //rotation
+      (resizedFile) => {  //Callback function
         setOriginalImage(URL.createObjectURL(file));
-        setResizedImage(resizedFile);
+        setResizedImage(URL.createObjectURL(resizedFile));
       },
-      'file'
+      'file'  //output type
     );
   };
 
@@ -27,7 +27,7 @@ function ImageUploader() {
     <div>
       <input type="file" onChange={handleImageChange} /> <br/>
       {originalImage && <img src={originalImage} alt="Original" />}
-      {resizedImage && <img src={URL.createObjectURL(resizedImage)} alt="Resized" />}
+      {resizedImage && <img src={resizedImage} alt="Resized" />}
     </div>
   );
 }
